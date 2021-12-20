@@ -72,32 +72,32 @@ class UQ_PINN:
         self.weights_P_k, self.biases_P_k = self.initialize_NN(layers_P_k)
         
         # Define Tensorflow session
-        self.sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
+        self.sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
         
         # Define placeholders and computational graph
-        self.x1_u_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_u_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x1_f_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_f_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.y_u_tf = tf.placeholder(tf.float32, shape=(None, self.Y_u_dim))
-        self.y_k_tf = tf.placeholder(tf.float32, shape=(None, self.Y_k_dim))
-        self.y_f_tf = tf.placeholder(tf.float32, shape=(None, self.Y_f_dim))
+        self.x1_u_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_u_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x1_f_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_f_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.y_u_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Y_u_dim))
+        self.y_k_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Y_k_dim))
+        self.y_f_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Y_f_dim))
 
-        self.x1_b1_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_b1_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x1_b2_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_b2_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x1_b3_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_b3_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x1_b4_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
-        self.x2_b4_tf = tf.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x1_b1_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_b1_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x1_b2_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_b2_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x1_b3_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_b3_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x1_b4_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
+        self.x2_b4_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.X_dim))
 
-        self.z_b1_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
-        self.z_b2_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
-        self.z_b3_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
-        self.z_b4_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
-        self.z_u_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
-        self.z_f_tf = tf.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_b1_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_b2_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_b3_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_b4_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_u_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
+        self.z_f_tf = tf.compat.v1.placeholder(tf.float32, shape=(None, self.Z_dim))
 
         self.y_u_pred = self.net_P_u(self.x1_u_tf, self.x2_u_tf, self.z_u_tf)
         self.y_b1_pred = self.get_b1(self.x1_b1_tf, self.x2_b1_tf, self.z_b1_tf)
@@ -116,8 +116,8 @@ class UQ_PINN:
         self.T_loss  = self.compute_discriminator_loss(self.x1_u_tf, self.x2_u_tf, self.y_u_tf, self.z_u_tf)
 
         # Define optimizer        
-        self.optimizer_KL = tf.train.AdamOptimizer(1e-4)
-        self.optimizer_T = tf.train.AdamOptimizer(1e-4)
+        self.optimizer_KL = tf.compat.v1.train.AdamOptimizer(1e-4)
+        self.optimizer_T = tf.compat.v1.train.AdamOptimizer(1e-4)
         
         # Define train Ops
         self.train_op_KL = self.optimizer_KL.minimize(self.G_loss, 
@@ -128,7 +128,7 @@ class UQ_PINN:
                                                     var_list = [self.weights_T, self.biases_T])
 
         # Initialize Tensorflow variables
-        init = tf.global_variables_initializer()
+        init = tf.compat.v1.global_variables_initializer()
         self.sess.run(init)
 
     
@@ -139,7 +139,7 @@ class UQ_PINN:
             in_dim = size[0]
             out_dim = size[1]
             xavier_stddev = 1. / np.sqrt((in_dim + out_dim) / 2.)
-            return tf.Variable(tf.random_normal([in_dim, out_dim], dtype=tf.float32) * xavier_stddev, dtype=tf.float32)   
+            return tf.Variable(tf.random.normal([in_dim, out_dim], dtype=tf.float32) * xavier_stddev, dtype=tf.float32)   
         
         weights = []
         biases = []
@@ -212,7 +212,7 @@ class UQ_PINN:
     def get_b1(self, X1, X2, Z):   
         z_prior = Z       
         u = self.net_P_u(X1, X2, z_prior)
-        u_x1 = tf.gradients(u, X1)[0]
+        u_x1 = tf.gradients(ys=u, xs=X1)[0]
         k = self.net_P_k(u)
         temp = self.q + k * u_x1
         return temp
@@ -220,7 +220,7 @@ class UQ_PINN:
     def get_b2(self, X1, X2, Z):   
         z_prior = Z       
         u = self.net_P_u(X1, X2, z_prior)
-        u_x2 = tf.gradients(u, X2)[0]
+        u_x2 = tf.gradients(ys=u, xs=X2)[0]
         return u_x2
 
     def get_b3(self, X1, X2, Z):   
@@ -232,16 +232,16 @@ class UQ_PINN:
     def get_b4(self, X1, X2, Z):   
         z_prior = Z       
         u = self.net_P_u(X1, X2, z_prior)
-        u_x2 = tf.gradients(u, X2)[0]
+        u_x2 = tf.gradients(ys=u, xs=X2)[0]
         return u_x2
 
     def get_f(self, X1, X2, Z_u):
         u = self.net_P_u(X1, X2, Z_u)
         k = self.net_P_k(u)
-        u_x1 = tf.gradients(u, X1)[0]
-        u_x2 = tf.gradients(u, X2)[0]
-        f_1 = tf.gradients(k*u_x1, X1)[0]
-        f_2 = tf.gradients(k*u_x2, X2)[0]
+        u_x1 = tf.gradients(ys=u, xs=X1)[0]
+        u_x2 = tf.gradients(ys=u, xs=X2)[0]
+        f_1 = tf.gradients(ys=k*u_x1, xs=X1)[0]
+        f_2 = tf.gradients(ys=k*u_x2, xs=X2)[0]
         f = f_1 + f_2
         return f
     
@@ -255,14 +255,14 @@ class UQ_PINN:
         T_pred = self.net_T(x1_u, x2_u, y_u_pred)
 
         # KL-divergence between the data and the generator samples
-        KL = tf.reduce_mean(T_pred)
+        KL = tf.reduce_mean(input_tensor=T_pred)
         
         # Entropic regularization
-        log_q = - tf.reduce_mean(tf.square(z_u_prior-z_u_encoder))
+        log_q = - tf.reduce_mean(input_tensor=tf.square(z_u_prior-z_u_encoder))
 
         # Physics-informed loss
-        loss_f = tf.reduce_mean(tf.square(y_f_pred)) + tf.reduce_mean(tf.square(y_b1_pred)) +\
-                tf.reduce_mean(tf.square(y_b2_pred)) +  tf.reduce_mean(tf.square(y_b3_pred)) + tf.reduce_mean(tf.square(y_b4_pred))
+        loss_f = tf.reduce_mean(input_tensor=tf.square(y_f_pred)) + tf.reduce_mean(input_tensor=tf.square(y_b1_pred)) +\
+                tf.reduce_mean(input_tensor=tf.square(y_b2_pred)) +  tf.reduce_mean(input_tensor=tf.square(y_b3_pred)) + tf.reduce_mean(input_tensor=tf.square(y_b4_pred))
 
         # Generator loss
         loss = KL + (1.0-self.lam)*log_q + self.beta * loss_f
@@ -283,8 +283,8 @@ class UQ_PINN:
         T_real = tf.sigmoid(T_real)
         T_fake = tf.sigmoid(T_fake)
         
-        T_loss = -tf.reduce_mean(tf.log(1.0 - T_real + 1e-8) + \
-                                 tf.log(T_fake + 1e-8)) 
+        T_loss = -tf.reduce_mean(input_tensor=tf.math.log(1.0 - T_real + 1e-8) + \
+                                 tf.math.log(T_fake + 1e-8)) 
         
         return T_loss
 
@@ -362,4 +362,3 @@ class UQ_PINN:
 
 
 
-    
